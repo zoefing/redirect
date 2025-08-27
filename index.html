@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>home</title>
+    <script>
+        // function to get the url query param from the address bar
+        function get_url() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('url') || 'https://www.instagram.com'; // default fallback
+        }
+
+        // function to go to task.html file
+        function jump_to_task() {
+            const target = get_url();
+            // currently hardcoded to not pass any url info (will need to fix)
+            window.location.href = `task.html`;
+            // window.location.href = `task.html?url=${encodeURIComponent(target)}`;
+        }
+
+        // function to jump to pause.html file
+        // could probably just remove this function given the length
+        function jump_to_pause() {
+            window.location.href = `pause.html`;
+        }
+    </script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
+    <h1>hi zoe! hope you are doing well. is opening this website something you truly want to do right now?</h1>
+    <p><a href="#" onclick="jump_to_task()">yes, i have a specific motivation</a></p>
+    <p><a href="#" onclick="jump_to_pause()">no. i am falling into a cycle...</a></p>
+</body>
+</html>

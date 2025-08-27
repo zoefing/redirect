@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>task</title>
+    <script>
+        // main function for redirecting
+        // called when redirect button is clicked
+        function redirect() {
+            // get motivation
+            const motivation = document.getElementById("motivation").value.trim();
+
+            // require motivation to continue
+            if (motivation === "") {
+                alert("please write your motivation before proceeding.");
+                return;
+            }
+
+            // save motivation using function below
+            saveMotivation(motivation);
+
+            // currently hardcoded
+            // want to add multi-site functionality
+            const target = "https://www.instagram.com/#bypass";
+            window.open(target, "_blank");
+
+            // optionally clear textarea
+            document.getElementById("motivation").value = "";
+            renderMotivations();
+        }
+
+        // some functionality for saving 
+        // format the timestamp to readable date/time
+        function formatDate(timestamp) {
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            };
+            return new Date(timestamp).toLocaleString(undefined, options);
+        }
+
+        // save motivation with timestamp and initial score
+        // this is a fun way to keep an archive and stay aware <3
+        function saveMotivation(text) {
+            // store motivations in local storage
+            const motivations = JSON.parse(localStorage.getItem("motivations") || "[]");
+
+            motivations.unshift({
+                text,
+                score: 0,
+                timestamp: Date.now()
+            });
+
+            localStorage.setItem("motivations", JSON.stringify(motivations.slice(0, 10))); // keep only latest 10
+        }
+
+        // display recent motivations
+        function renderMotivations() {
+            // get motivations from local storage
+            const motivations = JSON.parse(localStorage.getItem("motivations") || "[]");
+            const container = document.getElementById("recent");
+
+            // show motivations with time info
+            container.innerHTML = motivations.map((m, i) => `
+                <div style="margin-bottom: 10px; border-bottom: 1px solid #ccc; padding: 5px;">
+                    <small>${formatDate(m.timestamp)}</small><br>
+                    "${m.text}"
+            `).join("");
+        }
+
+        // render motivations!
+        window.onload = function () {
+            renderMotivations();
+        }
+    </script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding-top: 30px; max-width: 600px; margin: auto;">
+    <!-- fun little interface where user inputs their motivation -->
+    <h1>okay! go ahead</h1>
+    <p>write your specific motivation below:</p>
+    <textarea id="motivation" rows="4" cols="50" placeholder="why do you want to visit this site?"></textarea><br><br>
+    <!-- redirection button -->
+    <button onclick="redirect()">redirect</button>
+    <hr style="margin: 40px 0;">
+    <!-- display recent motivations -->
+    <p>recent motivations</p>
+    <div id="recent"></div>
+</body>
+</html>
