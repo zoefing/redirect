@@ -15,16 +15,30 @@
                 return;
             }
 
-            // save motivation using function below
-            saveMotivation(motivation);
+            // get desired website
+            let website = document.getElementById("website").value.trim();
 
-            // currently hardcoded
-            // want to add multi-site functionality
-            const target = "https://www.instagram.com/#bypass";
+            // require motivation to continue
+            if (website === "") {
+                alert("please enter a valid website address.");
+                return;
+            }
+
+            // prepend https:// if not already present
+            if (!website.startsWith("http://") && !website.startsWith("https://")) {
+                website = "https://" + website;
+            }
+
+            // save motivation using function below
+            saveMotivation(motivation, website);
+
+            // go to inputted website
+            const target = website;
             window.open(target, "_blank");
 
-            // optionally clear textarea
+            // optionally clear text area
             document.getElementById("motivation").value = "";
+            document.getElementById("website").value = "";
             renderMotivations();
         }
 
@@ -43,13 +57,14 @@
 
         // save motivation with timestamp and initial score
         // this is a fun way to keep an archive and stay aware <3
-        function saveMotivation(text) {
+        function saveMotivation(motivation, website) {
             // store motivations in local storage
             const motivations = JSON.parse(localStorage.getItem("motivations") || "[]");
 
+            // combine motivation components
             motivations.unshift({
-                text,
-                score: 0,
+                motivation,
+                website,
                 timestamp: Date.now()
             });
 
@@ -62,11 +77,12 @@
             const motivations = JSON.parse(localStorage.getItem("motivations") || "[]");
             const container = document.getElementById("recent");
 
-            // show motivations with time info
+            // show motivations with time info + website adr
             container.innerHTML = motivations.map((m, i) => `
-                <div style="margin-bottom: 10px; border-bottom: 1px solid #ccc; padding: 5px;">
+                <div style="margin-bottom: 10px; padding: 5px;">
                     <small>${formatDate(m.timestamp)}</small><br>
-                    "${m.text}"
+                    "${m.motivation}"<br>
+                    ${m.website}
             `).join("");
         }
 
@@ -80,7 +96,9 @@
     <!-- fun little interface where user inputs their motivation -->
     <h1>okay! go ahead</h1>
     <p>write your specific motivation below:</p>
+    <!-- text boxes for motivation and website input-->
     <textarea id="motivation" rows="4" cols="50" placeholder="why do you want to visit this site?"></textarea><br><br>
+    <textarea id="website" rows="1" cols="50" placeholder="https://"></textarea><br><br>
     <!-- redirection button -->
     <button onclick="redirect()">redirect</button>
     <hr style="margin: 40px 0;">
